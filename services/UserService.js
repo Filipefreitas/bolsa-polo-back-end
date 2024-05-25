@@ -28,8 +28,9 @@ exports.createAUser = (req, res)=> {
 };
 
 exports.loginUser = (req, res)=> {    
-    const userName = req.body.userName
+    const userName = req.body.username
     const password = req.body.password
+
     userModel.findOne({userName: {$eq: userName}})
     .then(user =>{
         if (user) {
