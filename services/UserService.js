@@ -37,7 +37,12 @@ exports.loginUser = (req, res)=> {
             bcrypt.compare(password, user.password)
             .then(isMatched=>{
                 if(isMatched){
-                    res.status(200).json({success: true, message: 'Username exists and password is correct'});
+                    if(user.isActive){
+                        res.status(200).json({success: true, message: 'Username exists, is active, and password is correct'});
+                    }
+                    else{
+                        res.status(401).json({success: false, message: 'User exists, but is not active'});
+                    }
                 }
                 else{   
                     res.status(200).json({success: false, message: 'Incorrect username or password'});
