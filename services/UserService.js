@@ -38,7 +38,7 @@ exports.loginUser = (req, res)=> {
             .then(isMatched=>{
                 if(isMatched){
                     if(user.isActive){
-                        res.status(200).json({success: true, message: 'Username exists, is active, and password is correct'});
+                        res.status(200).json({success: true, message: 'Username exists, is active, and password is correct', userName: user.userName, userRole: user.role});
                     }
                     else{
                         res.status(401).json({success: false, message: 'User exists, but is not active'});
