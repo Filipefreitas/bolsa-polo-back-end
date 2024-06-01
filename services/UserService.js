@@ -7,7 +7,7 @@ exports.createAUser = (req, res)=> {
         lastName: req.body.lastName,
         userName: req.body.userName,
         email: req.body.email,
-        role: req.body.role,
+        role: req.role,
         password: req.body.password
     });
     
@@ -31,14 +31,14 @@ exports.loginUser = (req, res)=> {
     const userName = req.body.username
     const password = req.body.password
 
-    userModel.findOne({userName: {$eq: userName}})
+    userModel.findOne({userName: {$eq: userName}}).populate({ path: 'role', model: 'Role', populate: { path: 'permissions', model: 'Permission' }})
     .then(user =>{
         if (user) {
             bcrypt.compare(password, user.password)
             .then(isMatched=>{
                 if(isMatched){
                     if(user.isActive){
-                        res.status(200).json({success: true, message: 'Username exists, is active, and password is correct', userName: user.userName, userRole: user.role});
+                        res.status(200).json({success: true, message: 'Username exists, is active, and password is correct', userName: user.userName, userRole: user.role.name, userPermissions: user.role.permissions});
                     }
                     else{
                         res.status(401).json({success: false, message: 'User exists, but is not active'});
@@ -61,7 +61,7 @@ exports.loginUser = (req, res)=> {
 };
 
 exports.getUsers = (req,res)=>{
-    userModel.find()
+    userModel.find().populate({ path: 'role', model: 'Role', populate: { path: 'permissions', model: 'Permission' }})
     .then(users=>{
         res.json({
             message: "A list of all users"
@@ -69,11 +69,12 @@ exports.getUsers = (req,res)=>{
             , totalUsers: users.length
         })
     })
-    .catch(err=>{
+    .catch(err => {
+        console.error('Error fetching users with roles and permissions:', err);
         res.status(500).json({
-            message: err
-        })
-    })
+          message: err.message
+        });
+      });
 };
 
 exports.getAUser = (req,res)=>{

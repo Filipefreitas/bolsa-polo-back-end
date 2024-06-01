@@ -1,68 +1,72 @@
-const bcrypt = require('bcryptjs');
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const bcrypt = require('bcryptjs');
 
 const userSchema = new Schema({
-    firstName: 
-    { 
+    firstName: { 
         type: String,
         required: true
     }, 
-    lastName: 
-    { 
+    lastName: { 
         type: String, 
         required: true,
         unique: false
     },
-    userName: 
-    { 
+    userName: { 
         type: String,
         required: true,
         unique: true
     },
-    email: 
-    { 
+    email: { 
         type: String, 
         required: true,
         unique: true
     },
-    role:
-    {
-        type: String,
-        enum: ["admin", "business partner", "approver"],
+    role:{
+        type: Schema.Types.ObjectId,
+        ref: 'Role',
         required: true
     },
-    password: 
-    { 
+    password: { 
         type: String 
         , required: true
     },
-    isActive:
-    {
+    isActive:{
         type: Boolean,
         default: true
     },
-    dateCreated: 
-    { 
+    dateCreated: { 
         type: Date
         , default: Date.now()
     }
 });
 
-userSchema.pre("save", function(next)
-{
-    bcrypt.genSalt(10)
-    .then((salt)=>
-    {
-        bcrypt.hash(this.password, salt)
-        .then((encryptedPassword)=>
-        {
-            this.password = encryptedPassword;
-            next();
-        })
-        .catch(err=>console.log(`Error occured when hashing ${err}`));        
-    })
-    .catch(err=>console.log(`Error occured when salting ${err}`));
+userSchema.pre("save", async function(next) {
+    try{
+        if (typeof this.role === 'string') {
+            const roleDoc = await Role.findOne({ name: this.role }).exec();
+            if (roleDoc) {
+                this.role = roleDoc._id;
+            } else {
+                throw new Error('Role not found');
+            }
+        }
+        next();
+    }
+    catch (err){
+        next(err);
+    }
+});
+
+userSchema.pre("save", async function(next){
+    try{
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    }
+    catch(err){
+        next(err);
+    }
 });
 
 const User = mongoose.model('User', userSchema);

@@ -34,8 +34,6 @@ app.use("/vouchers", voucherController);
 app.use("/students", studentController);
 app.use("/users", userController);
 app.use("/", generalController);
-
-
 app.listen(process.env.PORT,()=>{
     console.log(`the rest API is up and running on PORT ${process.env.PORT}`);
 
