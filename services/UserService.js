@@ -41,16 +41,16 @@ exports.loginUser = (req, res)=> {
                         res.status(200).json({success: true, message: 'Username exists, is active, and password is correct', userName: user.userName, userRole: user.role.name, userPermissions: user.role.permissions});
                     }
                     else{
-                        res.status(401).json({success: false, message: 'User exists, but is not active'});
+                        res.status(401).json({success: false, message: 'Usuário inativo. Contate o administrador'});
                     }
                 }
                 else{   
-                    res.status(200).json({success: false, message: 'Incorrect username or password'});
+                    res.status(401).json({success: false, message: 'Usuário ou senha inválidos'});
                 }
             })
           } 
           else { 
-            res.status(401).json({success: false, message: 'Incorrect username or password'});
+            res.status(401).json({success: false, message: 'Usuário ou senha inválidos'});
           }
     })
     .catch(err=>{

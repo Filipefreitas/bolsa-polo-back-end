@@ -34,7 +34,7 @@ exports.getVouchers = (req, res)=>{
         })
     }
     else{
-        voucherModel.find()
+        voucherModel.find().populate("studentVouchers")
         .then(vouchers=>{
             res.json({
                 message: "lista de todos os vouchers cadastrados",
