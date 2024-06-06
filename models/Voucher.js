@@ -21,6 +21,9 @@ const voucherSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Student'    
     },
+    requestedBy: {
+        type: String
+    },
     requestedAt: {
         type: Date
     },
