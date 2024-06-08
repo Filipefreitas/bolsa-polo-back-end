@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
 const voucherService = require("../services/VoucherService.js");
+const voucherMiddleware = require("../middleware/VoucherMiddleware.js");
 
 //cria um voucher
-router.post("/", voucherService.createAVoucher);
+router.post("/", voucherMiddleware.validateVoucher, voucherService.createAVoucher);
 
 //lista de todos os vouchers
 router.get("/", voucherService.getVouchers);

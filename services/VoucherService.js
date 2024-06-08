@@ -1,19 +1,26 @@
 const voucherModel = require("../models/Voucher.js");
 
-exports.createAVoucher = (req,res)=>{
-    const voucher = new voucherModel(req.body);
-    voucher.save()
-    .then((newVoucher)=>{
-        res.json({
-            message: "Voucher foi criado com sucesso e está salvo na coleção",
-            data: newVoucher
+exports.createAVoucher = (req, res) => {
+    const { percDiscount, qtdVouchers } = req.body;
+
+    const createVoucherPromises = [];
+    for (let i = 0; i < qtdVouchers; i++) {
+        const newVoucher = new voucherModel({ percDiscount, qtdVouchers });
+        createVoucherPromises.push(newVoucher.save());
+    }
+
+    Promise.all(createVoucherPromises)
+        .then((newVouchers) => {
+            res.json({
+                message: `${qtdVouchers} Vouchers foram criados com sucesso e estão salvos na coleção`,
+                data: newVouchers
+            });
         })
-    })
-    .catch(err=>{
-        res.status(500).json({
-            message: err
-        })
-    })
+        .catch((err) => {
+            res.status(500).json({
+                message: err.message
+            });
+        });
 };
 
 exports.getVouchers = (req, res)=>{

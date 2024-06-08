@@ -2,7 +2,7 @@ const userModel = require("../models/User");
 const roleModel = require('../models/Role')
 
 exports.validateUser = async (req, res, next)=>{
-    console.log(`The request body: ${JSON.stringify(req.body)}`)
+    //console.log(`The request body: ${JSON.stringify(req.body)}`)
     
     let errors = {};
     let hasErrors = false;
