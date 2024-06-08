@@ -13,14 +13,12 @@ exports.createAUser = (req, res)=> {
     
     newUser.save()
     .then((newUser)=>{
-        // console.log("14 Success")
         res.status(200).json({
             message: "User successfully created"
             , data: newUser
         })
     })
     .catch(errors=>{
-        // console.log("15 Eror")
         res.status(400).json({
             message: errors
         })
@@ -37,7 +35,7 @@ exports.loginUser = (req, res)=> {
             bcrypt.compare(password, user.password)
             .then(isMatched=>{
                 if(isMatched){
-                    if(user.isActive){
+                    if(user.status){
                         res.status(200).json({success: true, message: 'Username exists, is active, and password is correct', userName: user.userName, userRole: user.role.name, userPermissions: user.role.permissions});
                     }
                     else{

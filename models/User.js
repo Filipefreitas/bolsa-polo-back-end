@@ -31,7 +31,7 @@ const userSchema = new Schema({
         type: String 
         , required: true
     },
-    isActive:{
+    status:{
         type: Boolean,
         default: true
     },
